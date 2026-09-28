@@ -79,7 +79,7 @@ Reference answers are stored in `answers` with `student_id = NULL` and `answer_t
 
 ```bash
 git clone https://github.com/tanvir123-xyz/answer_grading_system_v1.git
-cd <your-repo-name>
+cd answer_grading_system_v1
 ```
 
 ### 2. Create the database
