@@ -1,0 +1,6 @@
+Flask==3.0.3
+mysql-connector-python==8.4.0
+numpy==1.26.4
+scikit-learn==1.5.1
+gensim==4.3.3
+sentence-transformers==3.0.1

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h2>What do you want to add?</h2>
+<div class="menu">
+    <a class="menu-btn" href="{{ url_for('add_question') }}">Add Question</a>
+    <a class="menu-btn" href="{{ url_for('add_student') }}">Add Student</a>
+    <a class="menu-btn" href="{{ url_for('add_reference_answer') }}">Add Reference Answer</a>
+    <a class="menu-btn" href="{{ url_for('add_student_answer') }}">Add Student Answer</a>
+    <a class="menu-btn" href="{{ url_for('grade_answers') }}">Grade Answers</a>
+</div>
+{% endblock %}

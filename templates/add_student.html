@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Add Student{% endblock %}
+{% block content %}
+<h2>Add Student</h2>
+<form method="POST" class="form">
+    <label for="roll_number">Roll number</label>
+    <input type="number" id="roll_number" name="roll_number" required>
+
+    <label for="student_name">Student name</label>
+    <input type="text" id="student_name" name="student_name" required>
+
+    <label for="category">Category</label>
+    <select id="category" name="category" required>
+        <option value="" disabled selected>Select category</option>
+        <option value="good">Good</option>
+        <option value="medium">Medium</option>
+        <option value="weak">Weak</option>
+    </select>
+
+    <button type="submit">Save Student</button>
+</form>
+<p><a href="{{ url_for('home') }}">&larr; Back to home</a></p>
+{% endblock %}

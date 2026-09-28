@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Grading Results{% endblock %}
+{% block content %}
+
+{% if question %}
+<div class="question-info">
+    <h2>Question {{ question.question_id }}</h2>
+    <p>{{ question.question_text }}</p>
+    <p><strong>Maximum Marks:</strong> {{ question.max_marks }}</p>
+</div>
+{% endif %}
+
+<div class="table-wrap">
+<table class="results-table">
+    <thead>
+        <tr>
+            <th rowspan="2">Roll No.</th>
+            <th rowspan="2">Student</th>
+            <th colspan="2">Jaccard</th>
+            <th colspan="2">TF-IDF</th>
+            <th colspan="2">Word2Vec</th>
+            <th colspan="2">SBERT</th>
+        </tr>
+        <tr>
+            <th>Similarity</th><th>Marks</th>
+            <th>Similarity</th><th>Marks</th>
+            <th>Similarity</th><th>Marks</th>
+            <th>Similarity</th><th>Marks</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in results %}
+        <tr>
+            <td>{{ row.roll_number }}</td>
+            <td>
+                {{ row.student_name }}<br>
+                <button type="button" class="link-btn"
+                        onclick="toggleAnswer('answer-{{ loop.index }}')">
+                    View Answer
+                </button>
+            </td>
+            <td>{{ row.algorithms.jaccard.similarity }}%</td>
+            <td>{{ row.algorithms.jaccard.marks }} / {{ row.max_marks }}</td>
+            <td>{{ row.algorithms.tfidf.similarity }}%</td>
+            <td>{{ row.algorithms.tfidf.marks }} / {{ row.max_marks }}</td>
+            <td>{{ row.algorithms.word2vec.similarity }}%</td>
+            <td>{{ row.algorithms.word2vec.marks }} / {{ row.max_marks }}</td>
+            <td>{{ row.algorithms.sbert.similarity }}%</td>
+            <td>{{ row.algorithms.sbert.marks }} / {{ row.max_marks }}</td>
+        </tr>
+        <tr id="answer-{{ loop.index }}" class="answer-row" style="display:none;">
+            <td colspan="10">
+                <div class="answer-box">
+                    <p><strong>Roll No:</strong> {{ row.roll_number }}</p>
+                    <p><strong>Student:</strong> {{ row.student_name }}</p>
+                    <p><strong>Student Answer:</strong></p>
+                    <p class="answer-text">"{{ row.answer_text }}"</p>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+<p><a href="{{ url_for('grade_answers') }}">&larr; Grade another question</a></p>
+<p><a href="{{ url_for('home') }}">&larr; Back to home</a></p>
+{% endblock %}

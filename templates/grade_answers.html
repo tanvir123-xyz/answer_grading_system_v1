@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Grade Answers{% endblock %}
+{% block content %}
+<h2>Grade Answers</h2>
+
+{% if questions %}
+<form method="POST" class="form">
+    <label for="question_id">Question</label>
+    <select id="question_id" name="question_id" required>
+        <option value="" disabled selected>Select a question</option>
+        {% for q in questions %}
+        <option value="{{ q.question_id }}">
+            Q{{ q.question_id }} - {{ q.question_text }} ({{ q.max_marks }} marks)
+        </option>
+        {% endfor %}
+    </select>
+
+    <p class="hint">
+        This runs Jaccard, TF-IDF, Word2Vec, and SBERT on every student
+        answer for this question, compared against its reference answer,
+        and saves the scores. It needs a reference answer and at least
+        one student answer to already exist for the question.
+    </p>
+
+    <button type="submit">Run Grading</button>
+</form>
+{% else %}
+<p>No questions found yet. Please <a href="{{ url_for('add_question') }}">add a question</a> first.</p>
+{% endif %}
+
+<p><a href="{{ url_for('home') }}">&larr; Back to home</a></p>
+{% endblock %}

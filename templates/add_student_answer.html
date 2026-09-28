@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Add Student Answer{% endblock %}
+{% block content %}
+<h2>Add Student Answer</h2>
+
+{% if questions and students %}
+<form method="POST" class="form">
+    <label for="question_id">Question</label>
+    <select id="question_id" name="question_id" required>
+        <option value="" disabled selected>Select a question</option>
+        {% for q in questions %}
+        <option value="{{ q.question_id }}">
+            Q{{ q.question_id }} - {{ q.question_text }} ({{ q.max_marks }} marks)
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for="student_id">Student</label>
+    <select id="student_id" name="student_id" required>
+        <option value="" disabled selected>Select a student</option>
+        {% for s in students %}
+        <option value="{{ s.student_id }}">
+            {{ s.roll_number }} - {{ s.student_name }} ({{ s.category }})
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for="answer_text">Student answer (leave blank if unanswered)</label>
+    <textarea id="answer_text" name="answer_text" rows="5"></textarea>
+
+    <button type="submit">Save Student Answer</button>
+</form>
+{% else %}
+<p>
+    You need at least one question and one student before adding an answer.
+    <a href="{{ url_for('add_question') }}">Add a question</a> or
+    <a href="{{ url_for('add_student') }}">add a student</a>.
+</p>
+{% endif %}
+
+<p><a href="{{ url_for('home') }}">&larr; Back to home</a></p>
+{% endblock %}

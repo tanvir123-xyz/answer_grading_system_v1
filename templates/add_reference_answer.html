@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Add Reference Answer{% endblock %}
+{% block content %}
+<h2>Add Reference Answer</h2>
+
+{% if questions %}
+<form method="POST" class="form">
+    <label for="question_id">Question</label>
+    <select id="question_id" name="question_id" required>
+        <option value="" disabled selected>Select a question</option>
+        {% for q in questions %}
+        <option value="{{ q.question_id }}">
+            Q{{ q.question_id }} - {{ q.question_text }} ({{ q.max_marks }} marks)
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for="answer_text">Reference answer</label>
+    <textarea id="answer_text" name="answer_text" rows="5" required></textarea>
+
+    <button type="submit">Save Reference Answer</button>
+</form>
+{% else %}
+<p>No questions found yet. Please <a href="{{ url_for('add_question') }}">add a question</a> first.</p>
+{% endif %}
+
+<p><a href="{{ url_for('home') }}">&larr; Back to home</a></p>
+{% endblock %}
