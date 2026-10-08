@@ -12,8 +12,8 @@ import mysql.connector
 DB_CONFIG = {
     "host": "localhost",
     "user": "root",
-    "password": "kvrg",   # <-- change this to your real MySQL password
-    "database": "answer_grading_v2",
+    "password": "YOUR_DATABASE_PASSWORD",   # <-- change this to your real MySQL password
+    "database": "answer_grading",
 }
 
 
