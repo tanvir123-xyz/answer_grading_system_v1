@@ -1,6 +1,3 @@
-# answer_grading_system_v1
-Flask web app that automatically grades student answers using Jaccard, TF-IDF, Word2Vec and SBERT similarity.
-
 # NLP-Based Answer Grading System
 
 > **Work in progress.** The current version supports data entry and automatic grading with four NLP algorithms. More features are planned (see [Roadmap](#roadmap)).
@@ -19,6 +16,7 @@ A Flask web application that automatically grades student answers by comparing t
   - TF-IDF with cosine similarity
   - Word2Vec
   - SBERT (Sentence-BERT)
+- **Manage Data** page: edit questions (text and marks), students, reference answers and student answers, or delete any entry
 - Results page with one row per student, showing similarity and marks for each algorithm
 - "View Answer" toggle to read each student's full answer without cluttering the table
 - All results are saved in the database (including a letter grade per algorithm)
@@ -51,7 +49,11 @@ answer_grading_system/
 │   ├── add_reference_answer.html
 │   ├── add_student_answer.html
 │   ├── grade_answers.html     # Choose a question to grade
-│   └── grade_results.html     # Algorithm comparison table
+│   ├── grade_results.html     # Algorithm comparison table
+│   ├── manage.html            # List of all data with Edit / Delete buttons
+│   ├── edit_question.html
+│   ├── edit_student.html
+│   └── edit_answer.html       # Used for both reference and student answers
 └── static/
     ├── css/style.css
     └── js/script.js
@@ -78,8 +80,8 @@ Reference answers are stored in `answers` with `student_id = NULL` and `answer_t
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/tanvir123-xyz/answer_grading_system_v1.git
-cd answer_grading_system_v1
+git clone https://github.com/<your-username>/<your-repo-name>.git
+cd <your-repo-name>
 ```
 
 ### 2. Create the database
@@ -118,6 +120,7 @@ Open `db.py` and replace the placeholder with your own MySQL password:
 "password": "MY_PASSWORD",
 ```
 
+Do not commit your real password to a public repository.
 
 ### 5. Run the app
 
@@ -136,6 +139,8 @@ Open `http://127.0.0.1:5000/` in your browser.
 5. **Grade Answers**: pick a question and click **Run Grading**. The results page shows every student's similarity and marks for all four algorithms.
 
 A question needs one reference answer and at least one student answer before it can be graded.
+
+6. **Manage Data**: fix mistakes. Edit any question, student or answer, or delete entries. Editing an answer, or changing a question's maximum marks, clears the old grading results for it, so click **Run Grading** again afterwards.
 
 ## How Grading Works
 
@@ -160,7 +165,7 @@ An unanswered question scores 0 on every algorithm. Re-grading a question replac
 - Word2Vec is trained on a very small corpus (the answers for one question), so its scores are less reliable than SBERT's.
 - Marks are directly proportional to similarity, and the grade thresholds are fixed starting values that have not been tuned against real teacher marks.
 - There is no login system; anyone with access to the app can add data and run grading.
-- There is no edit or delete functionality yet.
+- Deleting a question or student also deletes all of its answers and saved results (a confirmation prompt appears first).
 
 ## Roadmap
 
@@ -168,11 +173,8 @@ An unanswered question scores 0 on every algorithm. Re-grading a question replac
 - Teacher override for automatically calculated marks
 - Combining the four algorithms into a single final score
 - Tuning grade thresholds against teacher-assigned marks
-- Edit and delete for questions, students and answers
 - Environment-variable configuration for database credentials
 
 ## License
 
-This project is licensed under the MIT License. Anyone is free to use, copy, modify and distribute it.
-
-
+Educational project. Add a license of your choice if you plan to share or reuse the code.
