@@ -12,8 +12,8 @@ import mysql.connector
 DB_CONFIG = {
     "host": "localhost",
     "user": "root",
-    "password": "YOUR_PASSWORD",   # <-- change this to your real MySQL password
-    "database": "DATABASE_NAME",    # <-- change this to your real MySQL database
+    "password": "kvrg",   # <-- change this to your real MySQL password
+    "database": "answer_grading_v2",
 }
 
 
@@ -194,3 +194,132 @@ def clear_results_for_question(question_id):
     finally:
         cur.close()
         con.close()
+
+
+# ---------------------------------------------------------------------------
+# Edit / delete support (used by the Manage Data pages)
+# ---------------------------------------------------------------------------
+def _run_write(query, params):
+    """Run one INSERT/UPDATE/DELETE statement and commit it."""
+    con = get_connection()
+    cur = con.cursor()
+    try:
+        cur.execute(query, params)
+        con.commit()
+    finally:
+        cur.close()
+        con.close()
+
+
+def _fetch_one(query, params):
+    con = get_connection()
+    cur = con.cursor(dictionary=True)
+    try:
+        cur.execute(query, params)
+        return cur.fetchone()
+    finally:
+        cur.close()
+        con.close()
+
+
+# ----- Questions -----
+def get_question(question_id):
+    return _fetch_one(
+        "SELECT question_id, question_text, max_marks FROM questions "
+        "WHERE question_id = %s",
+        (question_id,),
+    )
+
+
+def update_question(question_id, question_text, max_marks):
+    _run_write(
+        "UPDATE questions SET question_text = %s, max_marks = %s "
+        "WHERE question_id = %s",
+        (question_text, max_marks, question_id),
+    )
+
+
+def delete_question(question_id):
+    # ON DELETE CASCADE removes this question's answers and results too.
+    _run_write("DELETE FROM questions WHERE question_id = %s", (question_id,))
+
+
+# ----- Students -----
+def get_student(student_id):
+    return _fetch_one(
+        "SELECT student_id, roll_number, student_name, category FROM students "
+        "WHERE student_id = %s",
+        (student_id,),
+    )
+
+
+def roll_number_taken_by_other(roll_number, student_id):
+    """True if a DIFFERENT student already uses this roll number."""
+    row = _fetch_one(
+        "SELECT student_id FROM students "
+        "WHERE roll_number = %s AND student_id <> %s",
+        (roll_number, student_id),
+    )
+    return row is not None
+
+
+def update_student(student_id, roll_number, student_name, category):
+    _run_write(
+        "UPDATE students SET roll_number = %s, student_name = %s, category = %s "
+        "WHERE student_id = %s",
+        (roll_number, student_name, category, student_id),
+    )
+
+
+def delete_student(student_id):
+    # ON DELETE CASCADE removes this student's answers and results too.
+    _run_write("DELETE FROM students WHERE student_id = %s", (student_id,))
+
+
+# ----- Answers (reference and student) -----
+def get_answer(answer_id):
+    """One answer plus the context needed to show it on the edit page."""
+    return _fetch_one(
+        "SELECT a.answer_id, a.question_id, a.answer_type, a.answer_text, "
+        "       q.question_text, s.roll_number, s.student_name "
+        "FROM answers a "
+        "JOIN questions q ON a.question_id = q.question_id "
+        "LEFT JOIN students s ON a.student_id = s.student_id "
+        "WHERE a.answer_id = %s",
+        (answer_id,),
+    )
+
+
+def get_all_answers():
+    """Every answer (reference first, then students) for the Manage page."""
+    con = get_connection()
+    cur = con.cursor(dictionary=True)
+    try:
+        cur.execute(
+            "SELECT a.answer_id, a.question_id, a.answer_type, a.answer_text, "
+            "       s.roll_number, s.student_name "
+            "FROM answers a "
+            "LEFT JOIN students s ON a.student_id = s.student_id "
+            "ORDER BY a.question_id, a.answer_type, s.roll_number"
+        )
+        return cur.fetchall()
+    finally:
+        cur.close()
+        con.close()
+
+
+def update_answer(answer_id, answer_text):
+    _run_write(
+        "UPDATE answers SET answer_text = %s WHERE answer_id = %s",
+        (answer_text, answer_id),
+    )
+
+
+def delete_answer(answer_id):
+    # ON DELETE CASCADE removes this answer's saved results too.
+    _run_write("DELETE FROM answers WHERE answer_id = %s", (answer_id,))
+
+
+def clear_results_for_answer(answer_id):
+    """Remove saved results for one answer (they are outdated after an edit)."""
+    _run_write("DELETE FROM results WHERE answer_id = %s", (answer_id,))
