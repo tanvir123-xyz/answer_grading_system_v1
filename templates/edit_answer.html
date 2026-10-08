@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Edit Answer{% endblock %}
+{% block content %}
+<h2>{% if is_reference %}Edit Reference Answer{% else %}Edit Student Answer{% endif %}</h2>
+
+<div class="question-info">
+    <p><strong>Question {{ answer.question_id }}:</strong> {{ answer.question_text }}</p>
+    {% if not is_reference %}
+    <p><strong>Student:</strong> {{ answer.roll_number }} - {{ answer.student_name }}</p>
+    {% endif %}
+</div>
+
+<form method="POST" class="form">
+    <label for="answer_text">
+        {% if is_reference %}Reference answer{% else %}Student answer (leave blank if unanswered){% endif %}
+    </label>
+    <textarea id="answer_text" name="answer_text" rows="6" {% if is_reference %}required{% endif %}>{{ answer.answer_text or '' }}</textarea>
+
+    <button type="submit">Save Changes</button>
+</form>
+<p><a href="{{ url_for('manage') }}">&larr; Back to Manage Data</a></p>
+{% endblock %}
